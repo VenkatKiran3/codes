@@ -1,0 +1,28 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+# Load the dataset
+data = pd.read_csv('train.csv')
+# Perform any necessary data cleaning steps
+# Example: Removing unnecessary columns
+data = data.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
+# Handle missing values
+data['Age'].fillna(data['Age'].mean(), inplace=True)
+data['Embarked'].fillna(data['Embarked'].mode()[0], inplace=True)
+# Split the dataset into features and labels
+X = data.drop('Survived', axis=1)
+y = data['Survived']
+# Perform label encoding for categorical variables
+encoder = LabelEncoder()
+categorical_cols = ['Sex', 'Embarked']
+for col in categorical_cols:
+ X[col] = encoder.fit_transform(X[col])
+# Perform feature scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
+random_state=42)
+# Print the shapes of the training and testing sets
+print("Training set shape:", X_train.shape)
+print("Testing set shape:", X_test.shape)
